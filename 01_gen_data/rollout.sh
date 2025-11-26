@@ -106,9 +106,9 @@ function gen_data() {
       EXT_HOST=$(echo ${h} | awk -F '|' '{print $2}')
       SEG_DATA_PATH=$(echo ${h} | awk -F '|' '{print $3}' | sed 's#//#/#g')
       if [ "${LOG_DEBUG}" == "true" ]; then
-        log_time "ssh -n ${EXT_HOST} \"rm -rf ${SEG_DATA_PATH}/hbenchmark; mkdir -p ${SEG_DATA_PATH}/hbenchmark/logs\" &"
+        log_time "ssh -n ${EXT_HOST} \"rm -rf ${SEG_DATA_PATH}/${GEN_PATH_NAME}; mkdir -p ${SEG_DATA_PATH}/${GEN_PATH_NAME}/logs\" &"
       fi
-      ssh -n ${EXT_HOST} "rm -rf ${SEG_DATA_PATH}/hbenchmark; mkdir -p ${SEG_DATA_PATH}/hbenchmark/logs" &
+      ssh -n ${EXT_HOST} "rm -rf ${SEG_DATA_PATH}/${GEN_PATH_NAME}; mkdir -p ${SEG_DATA_PATH}/${GEN_PATH_NAME}/logs" &
     done
     wait
 
@@ -117,11 +117,11 @@ function gen_data() {
       EXT_HOST=$(echo ${i} | awk -F '|' '{print $2}')
       SEG_DATA_PATH=$(echo ${i} | awk -F '|' '{print $3}' | sed 's#//#/#g')
       for ((j=1; j<=GEN_DATA_PARALLEL; j++)); do
-        GEN_DATA_PATH="${SEG_DATA_PATH}/hbenchmark/${CHILD}"
+        GEN_DATA_PATH="${SEG_DATA_PATH}/${GEN_PATH_NAME}/${CHILD}"
         if [ "${LOG_DEBUG}" == "true" ]; then
-          log_time "ssh -n ${EXT_HOST} \"bash -c 'cd ~/; ./generate_data.sh ${GEN_DATA_SCALE} ${CHILD} ${PARALLEL} ${GEN_DATA_PATH} > ${SEG_DATA_PATH}/hbenchmark/logs/tpch.generate_data.${CHILD}.log 2>&1 &'\""
+          log_time "ssh -n ${EXT_HOST} \"bash -c 'cd ~/; ./generate_data.sh ${GEN_DATA_SCALE} ${CHILD} ${PARALLEL} ${GEN_DATA_PATH} > ${SEG_DATA_PATH}/${GEN_PATH_NAME}/logs/tpch.generate_data.${CHILD}.log 2>&1 &'\""
         fi
-        ssh -n ${EXT_HOST} "bash -c 'cd ~/; ./generate_data.sh ${GEN_DATA_SCALE} ${CHILD} ${PARALLEL} ${GEN_DATA_PATH} > ${SEG_DATA_PATH}/hbenchmark/logs/tpch.generate_data.${CHILD}.log 2>&1 &'" &
+        ssh -n ${EXT_HOST} "bash -c 'cd ~/; ./generate_data.sh ${GEN_DATA_SCALE} ${CHILD} ${PARALLEL} ${GEN_DATA_PATH} > ${SEG_DATA_PATH}/${GEN_PATH_NAME}/logs/tpch.generate_data.${CHILD}.log 2>&1 &'" &
         CHILD=$((CHILD + 1))
       done
     done
@@ -155,9 +155,9 @@ function gen_data() {
       # For each path, start a gpfdist instance
       for GEN_DATA_PATH in "${GEN_PATHS[@]}"; do
         if [ "${LOG_DEBUG}" == "true" ]; then
-          log_time "ssh -n ${EXT_HOST} \"rm -rf ${GEN_DATA_PATH}/hbenchmark; mkdir -p ${GEN_DATA_PATH}/hbenchmark/logs\" &"
+          log_time "ssh -n ${EXT_HOST} \"rm -rf ${GEN_DATA_PATH}/${GEN_PATH_NAME}; mkdir -p ${GEN_DATA_PATH}/${GEN_PATH_NAME}/logs\" &"
         fi
-        ssh -n ${EXT_HOST} "rm -rf ${GEN_DATA_PATH}/hbenchmark; mkdir -p ${GEN_DATA_PATH}/hbenchmark/logs" &
+        ssh -n ${EXT_HOST} "rm -rf ${GEN_DATA_PATH}/${GEN_PATH_NAME}; mkdir -p ${GEN_DATA_PATH}/${GEN_PATH_NAME}/logs" &
       done
     done
     wait  
@@ -167,11 +167,11 @@ function gen_data() {
     for EXT_HOST in $(cat ${TPC_H_DIR}/segment_hosts.txt); do
       for GEN_DATA_PATH in "${GEN_PATHS[@]}"; do
         for ((j=1; j<=GEN_DATA_PARALLEL; j++)); do
-          GEN_DATA_SUBPATH="${GEN_DATA_PATH}/hbenchmark/${CHILD}"
+          GEN_DATA_SUBPATH="${GEN_DATA_PATH}/${GEN_PATH_NAME}/${CHILD}"
           if [ "${LOG_DEBUG}" == "true" ]; then
-            log_time "ssh -n ${EXT_HOST} \"bash -c 'cd ~/; ./generate_data.sh ${GEN_DATA_SCALE} ${CHILD} ${PARALLEL} ${GEN_DATA_SUBPATH} > ${GEN_DATA_PATH}/hbenchmark/logs/tpch.generate_data.${CHILD}.log 2>&1 &'\""
+            log_time "ssh -n ${EXT_HOST} \"bash -c 'cd ~/; ./generate_data.sh ${GEN_DATA_SCALE} ${CHILD} ${PARALLEL} ${GEN_DATA_SUBPATH} > ${GEN_DATA_PATH}/${GEN_PATH_NAME}/logs/tpch.generate_data.${CHILD}.log 2>&1 &'\""
           fi
-          ssh -n ${EXT_HOST} "bash -c 'cd ~/; ./generate_data.sh ${GEN_DATA_SCALE} ${CHILD} ${PARALLEL} ${GEN_DATA_SUBPATH} > ${GEN_DATA_PATH}/hbenchmark/logs/tpch.generate_data.${CHILD}.log 2>&1 &'" &
+          ssh -n ${EXT_HOST} "bash -c 'cd ~/; ./generate_data.sh ${GEN_DATA_SCALE} ${CHILD} ${PARALLEL} ${GEN_DATA_SUBPATH} > ${GEN_DATA_PATH}/${GEN_PATH_NAME}/logs/tpch.generate_data.${CHILD}.log 2>&1 &'" &
           CHILD=$((CHILD + 1))
         done
       done
@@ -213,28 +213,28 @@ if [ "${GEN_NEW_DATA}" == "true" ]; then
     for GEN_DATA_PATH in "${GEN_PATHS[@]}"; do
       if [[ ! -d "${GEN_DATA_PATH}" && ! -L "${GEN_DATA_PATH}" ]]; then
         if [ "${LOG_DEBUG}" == "true" ]; then
-          log_time "mkdir ${GEN_DATA_PATH}/hbenchmark"
+          log_time "mkdir ${GEN_DATA_PATH}/${GEN_PATH_NAME}"
         fi
-        mkdir -p ${GEN_DATA_PATH}/hbenchmark
+        mkdir -p ${GEN_DATA_PATH}/${GEN_PATH_NAME}
       fi
       if [ "${LOG_DEBUG}" == "true" ]; then
-        log_time "rm -rf ${GEN_DATA_PATH}/hbenchmark/*"
+        log_time "rm -rf ${GEN_DATA_PATH}/${GEN_PATH_NAME}/*"
       fi
-      rm -rf ${GEN_DATA_PATH}/hbenchmark/*
+      rm -rf ${GEN_DATA_PATH}/${GEN_PATH_NAME}/*
       if [ "${LOG_DEBUG}" == "true" ]; then
-        log_time "mkdir -p ${GEN_DATA_PATH}/hbenchmark/logs"
+        log_time "mkdir -p ${GEN_DATA_PATH}/${GEN_PATH_NAME}/logs"
       fi
-      mkdir -p ${GEN_DATA_PATH}/hbenchmark/logs
+      mkdir -p ${GEN_DATA_PATH}/${GEN_PATH_NAME}/logs
     done
 
     CHILD=1    
     for GEN_DATA_PATH in "${GEN_PATHS[@]}"; do
       for ((j=1; j<=GEN_DATA_PARALLEL; j++)); do
-        GEN_DATA_SUBPATH="${GEN_DATA_PATH}/hbenchmark/${CHILD}"
+        GEN_DATA_SUBPATH="${GEN_DATA_PATH}/${GEN_PATH_NAME}/${CHILD}"
         if [ "${LOG_DEBUG}" == "true" ]; then
-          log_time "sh ${TPC_H_DIR}/01_gen_data/generate_data.sh ${GEN_DATA_SCALE} ${CHILD} ${PARALLEL} ${GEN_DATA_SUBPATH} > ${GEN_DATA_PATH}/hbenchmark/logs/tpch.generate_data.${CHILD}.log 2>&1 &"
+          log_time "sh ${TPC_H_DIR}/01_gen_data/generate_data.sh ${GEN_DATA_SCALE} ${CHILD} ${PARALLEL} ${GEN_DATA_SUBPATH} > ${GEN_DATA_PATH}/${GEN_PATH_NAME}/logs/tpch.generate_data.${CHILD}.log 2>&1 &"
         fi
-        sh ${TPC_H_DIR}/01_gen_data/generate_data.sh ${GEN_DATA_SCALE} ${CHILD} ${PARALLEL} ${GEN_DATA_SUBPATH} > ${GEN_DATA_PATH}/hbenchmark/logs/tpch.generate_data.${CHILD}.log 2>&1 &
+        sh ${TPC_H_DIR}/01_gen_data/generate_data.sh ${GEN_DATA_SCALE} ${CHILD} ${PARALLEL} ${GEN_DATA_SUBPATH} > ${GEN_DATA_PATH}/${GEN_PATH_NAME}/logs/tpch.generate_data.${CHILD}.log 2>&1 &
         CHILD=$((CHILD + 1))
       done
     done
