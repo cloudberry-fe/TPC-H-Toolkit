@@ -49,7 +49,7 @@ function get_psql_count()
 }
 
 function get_running_jobs_count() {
-  job_count=$(ps -fu "${ADMIN_USER}" |grep -v grep |grep "${TPC_H_DIR}/08_multi_user/test.sh"|wc -l || true)
+  job_count=$(ps -fu "${ADMIN_USER}" |grep -v grep |grep -i "${TPC_H_DIR}/08_multi_user/test.sh"|wc -l || true)
   echo "${job_count}"
 }
 
