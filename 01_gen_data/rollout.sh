@@ -23,7 +23,7 @@ function get_count_generate_data() {
   while read -r i; do
     # Set reasonable connection timeout to avoid infinite waiting
     # Use -n option instead of -f to ensure command completes
-    next_count=$(ssh -o ConnectTimeout=10 -o LogLevel=quiet -n ${i} "bash -c 'ps -ef | grep generate_data.sh | grep -i ${GEN_PATH_NAME} | grep -v grep | wc -l'" 2>/dev/null)
+    next_count=$(ssh -o ConnectTimeout=10 -o LogLevel=quiet -n ${i} "bash -c 'ps -ef | grep generate_data.sh | grep -i \"${GEN_PATH_NAME}\" | grep -v grep | wc -l'" 2>/dev/null)
     
     # Check if it's a valid number, default to 0 if not
     check="^[0-9]+$"
