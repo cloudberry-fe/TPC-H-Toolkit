@@ -239,7 +239,7 @@ if [ "${GEN_NEW_DATA}" == "true" ]; then
       done
     done
     log_time "Now generating data...This may take a while."
-    count=$(ps -ef |grep -v grep |grep "generate_hdata.sh"|grep -i "${GEN_PATH_NAME}"|wc -l || true)
+    count=${PARALLEL}
     
     if [ "${LOG_DEBUG}" == "true" ]; then
       log_time "ps -ef |grep -v grep |grep \"generate_hdata.sh\"|grep -i \"${GEN_PATH_NAME}\"|wc -l || true"
@@ -259,7 +259,7 @@ if [ "${GEN_NEW_DATA}" == "true" ]; then
     copy_generate_data
     gen_data
     log_time "Now generating data...This may take a while."
-    count=$(get_count_generate_data)
+    count=${PARALLEL}
     seconds=0
     echo -ne "Generating data duration: "
     while [ "$count" -gt "0" ]; do
