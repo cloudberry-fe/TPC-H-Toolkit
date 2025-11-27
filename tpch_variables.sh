@@ -23,12 +23,12 @@ export DB_SCHEMA_NAME="tpch"
 export RUN_COMPILE_TPCH="true"
 
 # step 01_gen_data
+export RUN_GEN_DATA="true"
 # To run another TPC-H with a different BENCH_ROLE using existing tables and data
 # the queries need to be regenerated with the new role
 # change BENCH_ROLE and set RUN_GEN_DATA to true and GEN_NEW_DATA to false
 # GEN_NEW_DATA only takes affect when RUN_GEN_DATA is true, and the default setting
 # should true under normal circumstances
-export RUN_GEN_DATA="true"
 export GEN_NEW_DATA="true"
 ### Default path to store the generated benchmark data, separated by space for multiple paths.
 export CUSTOM_GEN_PATH="/tmp/hbenchmark"
