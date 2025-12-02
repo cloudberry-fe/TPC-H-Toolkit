@@ -91,7 +91,7 @@ function start_gpfdist() {
 }
 
 if [ "${RUN_MODEL}" == "remote" ]; then
-  sh ${PWD}/stop_gpfdist.sh
+  sh ${PWD}/stop_gpfdist.sh hgendata
   # Split CUSTOM_GEN_PATH into array of paths to support multiple directories
   IFS=' ' read -ra GEN_PATHS <<< "${CUSTOM_GEN_PATH}"
   
