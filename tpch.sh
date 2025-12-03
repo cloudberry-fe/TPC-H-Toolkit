@@ -14,7 +14,7 @@ export TPC_H_DIR
 
 log_time "TPC-H test started"
 
-log_time "TPC-H toolkit version is: V1.9_dev20251127"
+log_time "TPC-H toolkit version is: V2.0"
 
 # Check that pertinent variables are set in the variable file.
 check_variables
