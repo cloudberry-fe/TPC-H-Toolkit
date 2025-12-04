@@ -179,6 +179,12 @@ function gen_data() {
   fi
 }
 
+function copy_tpc()
+{
+  cp ${TPC_H_DIR}/00_compile_tpch/dbgen/dbgen ${TPC_H_DIR}/*_gen_data/
+  cp ${TPC_H_DIR}/00_compile_tpch/dbgen/dists.dss ${TPC_H_DIR}/*_gen_data/
+}
+
 step="gen_data"
 
 log_time "Step ${step} started"
@@ -187,6 +193,7 @@ init_log ${step}
 start_log
 schema_name=${DB_VERSION}
 table_name="gen_data"
+copy_tpc
 
 if [ "${GEN_NEW_DATA}" == "true" ]; then
   log_time "Start generating data with RUN_MODEL ${RUN_MODEL} with GEN_DATA_SCALE ${GEN_DATA_SCALE}."
